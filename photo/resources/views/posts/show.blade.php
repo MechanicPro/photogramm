@@ -7,7 +7,13 @@
                 <div class="card">
                     <div class="card-header">Лента пользователя {{$user->name}} <span
                                 class="badge badge-pill badge-info">{{count($posts)}}</span></div>
-
+                    @if (Auth::user()->id == $user->id)
+                        <a href="/post/create">
+                            <button type="button"
+                                    class="btn btn-outline-primary">Добавить новую ленту
+                            </button>
+                        </a>
+                    @endif
                     @foreach ($posts as $key => $post)
                         <div class="card-body">
                             <ul class="list-group">
@@ -27,9 +33,6 @@
                     @endforeach
 
                 </div>
-                @if (Auth::user()->id == $user->id)
-                    <a class="badge badge-success" href="/post/create">Добавить новую ленту...</a>
-                @endif
                 <?php echo $posts->render(); ?>
             </div>
         </div>
