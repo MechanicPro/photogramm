@@ -31,7 +31,7 @@ class PhotoController extends Controller
             $photo->save();
 
             $user = User::find(Auth::user()->id);
-            $user->score += 2;
+            $user->raw_score += 2;
             $user->save();
 
             return redirect('/photo/show' . $post_id);
@@ -48,19 +48,10 @@ class PhotoController extends Controller
      */
     public function show($id)
     {
-        $photos = DB::table('photos')
-            ->select('photos.id as id',
-                'photos.name_photo as name_photo',
-                'photos.path as path',
-                'photos.updated_at as date',
-                DB::raw('SUM(likes.like_ph) as like_ph'),
-                DB::raw('SUM(likes.dislike_ph) as dislike_ph')
-            )
-            ->leftJoin('likes', 'likes.photo_id', '=', 'photos.id')
-            ->where('photos.post_id', '=', $id)
-            ->orderBy('photos.updated_at', 'desc')
-            ->groupBy('photos.id')
-            ->paginate(50);
+        $photos = Photo::where('post_id', $id)
+            ->groupBy('id')
+            ->orderBy('updated_at', 'desc')
+            ->paginate(25);
 
         $post = Post::find($id);
 
@@ -78,13 +69,14 @@ class PhotoController extends Controller
     public function destroy($id, $post_id)
     {
         if (isset($id) && isset($post_id)) {
-            DB::table('photos')->where('id', '=', $id)->delete();
+            $photo = Photo::find($id);
+            $photo->delete();
 
             $user = User::find(Auth::user()->id);
-            if ($user->score >= 2)
-                $user->score -= 2;
+            if ($user->raw_score >= 2)
+                $user->raw_score -= 2;
             else
-                $user->score = 0;
+                $user->raw_score = 0;
             $user->save();
 
             return redirect('/photo/show' . $post_id);

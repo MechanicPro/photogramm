@@ -11,8 +11,8 @@
                     <div class="card-header">Редактирование ленты</div>
                     <div class="card-body">
                         <form method="POST" action="/post/update/{{$id}}">
-                            @csrf
-
+                            {{ csrf_field() }}
+                            {{ method_field('PUT') }}
                             <div class="form-group row">
                                 <label for="name_post"
                                        class="col-sm-4 col-form-label text-md-right">{{ __('Наименование ленты') }}</label>

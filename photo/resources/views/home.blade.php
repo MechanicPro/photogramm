@@ -23,14 +23,23 @@
                                         <li class="list-group-item list-group-item-secondary">{{$post->description}}</li>
                                     </ul>
                                     <div class="col-md-8">
-                                        <span class="badge badge-pill badge-secondary">Дата публикации: <b>{{$post->date}}</b></span>
+                                        <span class="badge badge-pill badge-secondary">Дата публикации: <b>{{$post->updated_at}}</b></span>
                                     </div>
+
                                     <div class="col-md-8">
-                                        <a class="badge badge-danger" href="/post/destroy{{$post -> id}}">Удалить
-                                            ленту</a>
-                                        <a class="badge badge-warning"
-                                           href="/post/update/{{$post -> id}}/{{$post->name_post}}/{{$post->description}}">Редактировать
-                                            ленту</a>
+                                        <form action="/post/destroy{{$post -> id}}" method="post"
+                                              accept-charset="UTF-8">
+                                            {{ csrf_field() }}
+                                            {{ method_field('DELETE') }}
+                                            <button class="btn btn-outline-danger" type="submit">
+                                                Удалить ленту
+                                            </button>
+                                            <a href="/post/update/{{$post -> id}}/{{$post->name_post}}/{{$post->description}}">
+                                                <button type="button" class="btn btn-outline-warning">Редактировать
+                                                    ленту
+                                                </button>
+                                            </a>
+                                        </form>
                                     </div>
                                 </div>
                                 <hr>
@@ -54,9 +63,9 @@
                                     <li class="list-group-item"><b><a
                                                     href="/photo/show{{$post -> id}}">{{$post->name_post}}</a></b></li>
                                     <li class="list-group-item">Описание: <b>{{$post->description}}</b></li>
-                                    <li class="list-group-item"><b>{{$post->date}}</b></li>
+                                    <li class="list-group-item"><b>{{$post->updated_at}}</b></li>
                                     <li class="list-group-item"><a
-                                                href="/post/show/user{{$post -> user_id}}"><b>{{$post->name_user}}</b></a>
+                                                href="/post/show/user{{$post -> user_id}}"><b>{{$post->user->name}}</b></a>
                                     </li>
                                 </ul>
                             </div>

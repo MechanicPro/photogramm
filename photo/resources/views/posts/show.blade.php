@@ -21,17 +21,26 @@
                                             href="/photo/show{{$post -> id}}">{{$post->name_post}}</a></li>
                                 <li class="list-group-item list-group-item-secondary">{{$post->description}}</li>
                             </ul>
+                            <span class="badge badge-pill badge-secondary">Дата публикации: <b>{{$post->updated_at}}</b></span>
                             @if (Auth::user()->id == $user->id)
-                                <a class="badge badge-danger" href="/post/destroy{{$post -> id}}">Удалить ленту</a>
-                                <a class="badge badge-warning"
-                                   href="/post/update/{{$post -> id}}/{{$post->name_post}}/{{$post->description}}">Редактировать
-                                    ленту</a>
+                                <div class="col-md-8">
+                                    <form action="/post/destroy{{$post -> id}}" method="post"
+                                          accept-charset="UTF-8">
+                                        {{ csrf_field() }}
+                                        {{ method_field('DELETE') }}
+                                        <button class="btn btn-outline-danger" type="submit">
+                                            Удалить ленту
+                                        </button>
+                                        <a href="/post/update/{{$post -> id}}/{{$post->name_post}}/{{$post->description}}">
+                                            <button type="button" class="btn btn-outline-warning">Редактировать ленту
+                                            </button>
+                                        </a>
+                                    </form>
+                                </div>
                             @endif
-                            <span class="badge badge-pill badge-secondary">Дата публикации: <b>{{$post->date}}</b></span>
                         </div>
                         <hr>
                     @endforeach
-
                 </div>
                 <?php echo $posts->render(); ?>
             </div>

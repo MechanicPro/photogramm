@@ -14,9 +14,7 @@ class LikeController extends Controller
     {
         $isUser = false;
 
-        $like = DB::table('likes')
-            ->where('likes.photo_id', '=', $id)
-            ->get();
+        $like = Like::where('likes.photo_id', $id)->get();
 
         if (count($like) > 0) {
             foreach ($like as $i) {
@@ -29,18 +27,16 @@ class LikeController extends Controller
             }
 
             if ($isUser) {
-                DB::table('likes')
-                    ->where([
-                        ['user_id', '=', $user_id],
-                        ['photo_id', '=', $id],
-                    ])
-                    ->delete();
+                Like::where([
+                    ['user_id', '=', $user_id],
+                    ['photo_id', '=', $id],
+                ])->delete();
 
-                $user = User::find(Auth::user()->id);
-                if ($user->score >= 1)
-                    $user->score -= 1;
+                $user = User::find($user_id);
+                if ($user->raw_score >= 1)
+                    $user->raw_score -= 1;
                 else
-                    $user->score = 0;
+                    $user->raw_score = 0;
                 $user->save();
             } else {
                 $like = new Like();
@@ -50,8 +46,8 @@ class LikeController extends Controller
                 $like->user_id = $user_id;
                 $like->save();
 
-                $user = User::find(Auth::user()->id);
-                $user->score += 1;
+                $user = User::find($user_id);
+                $user->raw_score += 1;
                 $user->save();
             }
         } else {
@@ -62,8 +58,8 @@ class LikeController extends Controller
             $like->user_id = $user_id;
             $like->save();
 
-            $user = User::find(Auth::user()->id);
-            $user->score += 1;
+            $user = User::find($user_id);
+            $user->raw_score += 1;
             $user->save();
         }
         return redirect('/photo/show' . $post_id);
@@ -73,9 +69,7 @@ class LikeController extends Controller
     {
         $isUser = false;
 
-        $like = DB::table('likes')
-            ->where('likes.photo_id', '=', $id)
-            ->get();
+        $like = Like::where('likes.photo_id', $id)->get();
 
         if (count($like) > 0) {
             foreach ($like as $i) {
@@ -88,12 +82,10 @@ class LikeController extends Controller
             }
 
             if ($isUser) {
-                DB::table('likes')
-                    ->where([
-                        ['user_id', '=', $user_id],
-                        ['photo_id', '=', $id],
-                    ])
-                    ->delete();
+                Like::where([
+                    ['user_id', '=', $user_id],
+                    ['photo_id', '=', $id],
+                ])->delete();
             } else {
                 $like = new Like();
                 $like->like_ph = 0;

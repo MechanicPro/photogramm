@@ -8,11 +8,13 @@
                     <div class="card-header">Фотографии ленты {{$post->name_post}} пользователя
                         <a href="/post/show/user{{$user->id}}"><b>{{$user->name}}</b></a>
                         <span class="badge badge-pill badge-info">{{count($photos)}}</span></div>
-                    <a href="/photo/create{{$post->id}}">
-                        <button type="button"
-                                class="btn btn-outline-primary">Добавить новую фотографию
-                        </button>
-                    </a>
+                    @if (Auth::user()->id == $user->id)
+                        <a href="/photo/create{{$post->id}}">
+                            <button type="button"
+                                    class="btn btn-outline-primary">Добавить новую фотографию
+                            </button>
+                        </a>
+                    @endif
                     @extends('layouts.error')
                     @if (count($photos) > 0)
                         @foreach ($photos as $key => $photo)
@@ -26,17 +28,22 @@
                                     </li>
                                 </ul>
                                 <div class="col-md-8">
-                                    <span class="badge badge-pill badge-secondary">Дата публикации: <b>{{$photo->date}}</b></span>
+                                    <span class="badge badge-pill badge-secondary">Дата публикации: <b>{{$photo->updated_at}}</b></span>
                                     <a href="/photo/like/{{$photo -> id}}/{{Auth::user()->id}}/{{$post->id}}"
-                                       class="badge badge-pill badge-success">like {{$photo->like_ph}}</a>
+                                       class="badge badge-pill badge-success">like {{$photo->like->sum('like_ph')}}</a>
                                     <a href="/photo/dislike/{{$photo -> id}}/{{Auth::user()->id}}/{{$post->id}}"
-                                       class="badge badge-pill badge-danger">dislike {{$photo->dislike_ph}}</a>
+                                       class="badge badge-pill badge-danger">dislike {{$photo->like->sum('dislike_ph')}}</a>
                                 </div>
                                 @if (Auth::user()->id == $user->id)
                                     <div class="col-md-8">
-                                        <a class="badge badge-danger"
-                                           href="/photo/destroy/{{$photo -> id}}/{{$post->id}}">Удалить
-                                            фотографию</a>
+                                        <form action="/photo/destroy/{{$photo -> id}}/{{$post->id}}" method="post"
+                                              accept-charset="UTF-8">
+                                            {{ csrf_field() }}
+                                            {{ method_field('DELETE') }}
+                                            <button class="btn btn-outline-danger" type="submit">
+                                                Удалить фотографию
+                                            </button>
+                                        </form>
                                     </div>
                                 @endif
                             </div>

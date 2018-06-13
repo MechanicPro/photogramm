@@ -22,32 +22,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        $myPosts = DB::table('posts')
-            ->select('posts.id as id',
-                'posts.name_post as name_post',
-                'posts.description as description',
-                'posts.updated_at as date',
-                'users.name as name_user',
-                'users.id as user_id'
-            )
-            ->leftJoin('users', 'users.id', '=', 'posts.user_id')
-            ->where('posts.user_id', '=', Auth::user()->id)
-            ->orderBy('posts.updated_at', 'desc')
-            ->paginate(25);
-
-
-        $anyPosts = DB::table('posts')
-            ->select('posts.id as id',
-                'posts.name_post as name_post',
-                'posts.description as description',
-                'posts.updated_at as date',
-                'users.name as name_user',
-                'users.id as user_id'
-            )
-            ->leftJoin('users', 'users.id', '=', 'posts.user_id')
-            ->where('posts.user_id', '<>', Auth::user()->id)
-            ->orderBy('posts.updated_at', 'desc')
-            ->paginate(25);
+        $myPosts = Post::where('user_id', '=', Auth::user()->id)->orderBy('updated_at', 'desc')->paginate(25);
+        $anyPosts = Post::where('user_id', '<>', Auth::user()->id)->orderBy('updated_at', 'desc')->paginate(25);
 
         return view('home')->with(['myPosts' => $myPosts, 'anyPosts' => $anyPosts]);
     }
@@ -61,7 +37,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name_post' => 'required',
+            'name_post' => 'required|max:50',
             'description' => 'required'
         ]);
 
@@ -72,7 +48,7 @@ class PostController extends Controller
         $post->save();
 
         $user = User::find(Auth::user()->id);
-        $user->score += 50;
+        $user->raw_score += 50;
         $user->save();
 
         return redirect('/home');
@@ -80,16 +56,9 @@ class PostController extends Controller
 
     public function showPostUser($id)
     {
-        $posts = DB::table('posts')
-            ->select('posts.id as id',
-                'posts.name_post as name_post',
-                'posts.description as description',
-                'posts.updated_at as date'
-            )
-            ->where('posts.user_id', '=', $id)
-            ->orderBy('posts.updated_at', 'desc')
-            ->paginate(50);
+        $posts = Post::where('user_id', $id)->orderBy('updated_at', 'desc')->paginate(50);
         $user = User::find($id);
+
         return view('posts.show')->with(['posts' => $posts, 'user' => $user]);
     }
 
@@ -102,10 +71,15 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        DB::table('posts')
-            ->where('id', $id)
-            ->update(['name_post' => $request->name_post,
-                'description' => $request->description]);
+        $this->validate($request, [
+            'name_post' => 'required|max:50',
+            'description' => 'required'
+        ]);
+
+        $post = Post::find($id);
+        $post->name_post = $request->name_post;
+        $post->description = $request->description;
+        $post->save();
 
         return redirect('/home');
     }
@@ -118,7 +92,9 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        DB::table('posts')->where('id', '=', $id)->delete();
+        $post = Post::find($id);
+        $post->delete();
+
         return redirect('/home');
     }
 }
