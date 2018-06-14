@@ -29,10 +29,11 @@
                                 </ul>
                                 <div class="col-md-8">
                                     <span class="badge badge-pill badge-secondary">Дата публикации: <b>{{$photo->updated_at}}</b></span>
-                                    <a href="/photo/like/{{$photo -> id}}/{{Auth::user()->id}}/{{$post->id}}"
-                                       class="badge badge-pill badge-success">like {{$photo->like->sum('like_ph')}}</a>
-                                    <a href="/photo/dislike/{{$photo -> id}}/{{Auth::user()->id}}/{{$post->id}}"
-                                       class="badge badge-pill badge-danger">dislike {{$photo->like->sum('dislike_ph')}}</a>
+
+                                    <like-component :id="{{$photo -> id}}"
+                                                    :user_id="{{Auth::user()->id}}"
+                                                    :post_id="{{$post->id}}">
+                                    </like-component>
                                 </div>
                                 @if (Auth::user()->id == $user->id)
                                     <div class="col-md-8">

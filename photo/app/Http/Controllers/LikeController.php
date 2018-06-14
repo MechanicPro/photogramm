@@ -10,6 +10,16 @@ use Illuminate\Support\Facades\DB;
 
 class LikeController extends Controller
 {
+    public function counts($id)
+    {
+        $counts = [];
+        $like = Like::where('photo_id', $id)->get();
+        $counts['like'] = $like->sum('like_ph');
+        $counts['dislike'] = $like->sum('dislike_ph');
+
+        return $counts;
+    }
+
     public function like($id, $user_id, $post_id)
     {
         $isUser = false;
@@ -62,7 +72,8 @@ class LikeController extends Controller
             $user->raw_score += 1;
             $user->save();
         }
-        return redirect('/photo/show' . $post_id);
+
+        return $this->counts($id);
     }
 
     public function dislike($id, $user_id, $post_id)
@@ -102,6 +113,7 @@ class LikeController extends Controller
             $like->user_id = $user_id;
             $like->save();
         }
-        return redirect('/photo/show' . $post_id);
+
+        return $this->counts($id);
     }
 }

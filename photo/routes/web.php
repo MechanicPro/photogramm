@@ -42,3 +42,5 @@ Route::delete('/photo/destroy/{id}/{post_id}', 'PhotoController@destroy');
 
 Route::get('/photo/like/{id}/{user_id}/{post_id}', 'LikeController@like');
 Route::get('/photo/dislike/{id}/{user_id}/{post_id}', 'LikeController@dislike');
+Route::get('/photo/count/{id}', 'LikeController@counts');
+
