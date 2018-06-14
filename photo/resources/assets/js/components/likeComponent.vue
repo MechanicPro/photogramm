@@ -1,11 +1,15 @@
 <template>
     <div class="container">
-        <a href="#"
-           class="badge badge-pill badge-success" v-on:click="like()">like {{counts['like']}}</a>
-        <a href="#"
-           class="badge badge-pill badge-danger" v-on:click="dislike()">dislike {{counts['dislike']}}</a>
+        <li class="badge badge-pill badge-success" v-on:click="like()">like {{counts['like']}}</li>
+        <li class="badge badge-pill badge-danger" v-on:click="dislike()">dislike {{counts['dislike']}}</li>
     </div>
 </template>
+
+<style>
+    li {
+        cursor: pointer;
+    }
+</style>
 
 <script>
     export default {
